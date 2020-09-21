@@ -3,7 +3,6 @@ package com.idealista.ranking.domain;
 import lombok.Builder;
 import lombok.Value;
 import lombok.With;
-import reactor.core.publisher.Flux;
 
 import java.util.Date;
 import java.util.List;

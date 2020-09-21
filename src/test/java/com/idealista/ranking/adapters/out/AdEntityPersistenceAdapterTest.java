@@ -77,7 +77,7 @@ class AdEntityPersistenceAdapterTest {
 
     private boolean checkPictures(Ad ad) {
         return pictures
-                .map(pictureEntity -> new Picture(pictureEntity.getId(), pictureEntity.getUrl(), pictureEntity.getQuality()))
+                .map(pictureEntity -> new Picture(pictureEntity.getId(), pictureEntity.getUrl(), Picture.Quality.valueOf(pictureEntity.getQuality())))
                 .toStream()
                 .collect(Collectors.toList())
                 .containsAll(ad.getPictures());

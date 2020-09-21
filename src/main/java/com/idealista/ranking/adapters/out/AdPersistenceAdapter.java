@@ -25,6 +25,11 @@ public class AdPersistenceAdapter implements CalculateScoreRepository {
                 .map(this::toDomain);
     }
 
+    @Override
+    public Ad save(Ad capture) {
+        return null;
+    }
+
     private Ad toDomain(AdEntity adEntity) {
 
         return Ad.builder()
@@ -42,7 +47,7 @@ public class AdPersistenceAdapter implements CalculateScoreRepository {
         return inMemoryPersistence
                 .getPictures()
                 .filter(pictureEntity -> pictures.contains(pictureEntity.getId()))
-                .map(pictureEntity -> new Picture(pictureEntity.getId(), pictureEntity.getUrl(), pictureEntity.getQuality()))
+                .map(pictureEntity -> new Picture(pictureEntity.getId(), pictureEntity.getUrl(), Picture.Quality.valueOf(pictureEntity.getQuality())))
                 .toStream()
                 .collect(Collectors.toList());
     }

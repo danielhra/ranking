@@ -7,4 +7,5 @@ public interface CalculateScoreRepository {
 
     Flux<Ad> getAdsWithoutScore();
 
+    Ad save(Ad capture);
 }

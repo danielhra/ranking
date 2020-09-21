@@ -1,10 +1,8 @@
 package com.idealista.ranking.application;
 
-interface Evaluator {
+import com.idealista.ranking.domain.Ad;
 
-    int getScoreAmount();
+public interface Evaluator {
 
-    void setScoreAmount();
-
-    int evaluate();
+    int evaluate(Ad ad);
 }

@@ -6,5 +6,7 @@ import lombok.Value;
 public class Picture {
     Integer id;
     String url;
-    String quality;
+    Quality quality;
+
+    public enum Quality {HD,SD}
 }
