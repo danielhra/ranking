@@ -38,6 +38,10 @@ public class DescriptionEvaluator implements Evaluator {
                 + calculateScoringWords(ad.getDescription());
     }
 
+    private boolean thereIsNoDescription(Ad ad) {
+        return ad.getDescription() == null || ad.getDescription().isEmpty();
+    }
+
     private int calculateScoreByNumberOfWordsAndTypology(Ad ad) {
         if (FLAT == ad.getTypology()) {
             return calculateFlatScoreByNumberOfWords(ad.getDescription());
@@ -46,25 +50,6 @@ public class DescriptionEvaluator implements Evaluator {
             return calculateChaletScoreByNumberOfWords(ad.getDescription());
         }
         return 0;
-    }
-
-    private int calculateScoringWords(String description) {
-        return scoringWords.stream()
-                .mapToInt(calculateMatchingWordsInDescription(description))
-                .sum();
-    }
-
-    private ToIntFunction<Pattern> calculateMatchingWordsInDescription(String description) {
-        return scoringWord -> (int) (scoringWord.matcher(description).results().count() * SCORE_FOR_MATCHING_WORD);
-    }
-
-
-    private int calculateChaletScoreByNumberOfWords(String description) {
-        return descriptionHasMoreThan50Words(description) ? SCORE_FOR_CHALET_DESCRIPTION_WITH_MORE_THAN_50_WORDS : 0;
-    }
-
-    private boolean thereIsNoDescription(Ad ad) {
-        return ad.getDescription() == null || ad.getDescription().isEmpty();
     }
 
     private int calculateFlatScoreByNumberOfWords(String description) {
@@ -76,12 +61,26 @@ public class DescriptionEvaluator implements Evaluator {
         return 0;
     }
 
+    private int calculateChaletScoreByNumberOfWords(String description) {
+        return descriptionHasMoreThan50Words(description) ? SCORE_FOR_CHALET_DESCRIPTION_WITH_MORE_THAN_50_WORDS : 0;
+    }
+
     private boolean descriptionHasMoreThan50Words(String description) {
         return description.length() >= 50;
     }
 
     private boolean descriptionHasBetween29And49Words(String description) {
         return description.length() >= 29 && description.length() <= 49;
+    }
+
+    private int calculateScoringWords(String description) {
+        return scoringWords.stream()
+                .mapToInt(calculateMatchingWordsInDescription(description))
+                .sum();
+    }
+
+    private ToIntFunction<Pattern> calculateMatchingWordsInDescription(String description) {
+        return scoringWord -> (int) (scoringWord.matcher(description).results().count() * SCORE_FOR_MATCHING_WORD);
     }
 
 }

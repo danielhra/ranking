@@ -21,7 +21,6 @@ public class CalculateScoreService implements CalculateScoreUseCase {
     CalculateScoreRepository repository;
     PictureEvaluator pictureEvaluator;
     DescriptionEvaluator descriptionEvaluator;
-
     CompletionEvaluator completionEvaluator;
 
     @Override
