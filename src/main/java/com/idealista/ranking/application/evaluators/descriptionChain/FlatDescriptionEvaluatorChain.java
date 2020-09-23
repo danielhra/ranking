@@ -12,11 +12,9 @@ public class FlatDescriptionEvaluatorChain extends DescriptionEvaluatorChain {
 
     @Override
     public int evaluate(Ad ad) {
-        if (FLAT == ad.getTypology()) {
-            final int score = ad.getScore() + calculateFlatScoreByNumberOfWords(ad.getDescription());
-            return super.evaluate(ad.withScore(score));
-        }
-        return super.evaluate(ad);
+        return FLAT == ad.getTypology()
+                ? super.evaluate(ad.withScore(calculateFlatScoreByNumberOfWords(ad.getDescription())))
+                : super.evaluate(ad);
     }
 
     private int calculateFlatScoreByNumberOfWords(String description) {

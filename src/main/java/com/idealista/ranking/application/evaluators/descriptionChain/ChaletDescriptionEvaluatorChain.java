@@ -9,12 +9,9 @@ public class ChaletDescriptionEvaluatorChain extends DescriptionEvaluatorChain {
 
     @Override
     public int evaluate(Ad ad) {
-        if (CHALET == ad.getTypology()){
-            final int score = ad.getScore() + calculateChaletScoreByNumberOfWords(ad.getDescription());
-            return super.evaluate(ad.withScore(score));
-        }
-
-        return super.evaluate(ad);
+        return CHALET == ad.getTypology()
+                ? super.evaluate(ad.withScore(calculateChaletScoreByNumberOfWords(ad.getDescription())))
+                : super.evaluate(ad);
 
     }
 

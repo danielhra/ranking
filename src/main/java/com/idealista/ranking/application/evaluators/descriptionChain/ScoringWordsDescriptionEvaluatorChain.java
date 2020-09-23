@@ -20,9 +20,7 @@ public class ScoringWordsDescriptionEvaluatorChain extends DescriptionEvaluatorC
 
     @Override
     public int evaluate(Ad ad) {
-
-        final int score = ad.getScore() + calculateScoringWords(ad.getDescription());
-        return super.evaluate(ad.withScore(score));
+        return super.evaluate(ad.withScore(calculateScoringWords(ad.getDescription())));
     }
 
     private int calculateScoringWords(String description) {

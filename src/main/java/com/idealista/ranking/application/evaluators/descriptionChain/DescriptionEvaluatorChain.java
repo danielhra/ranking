@@ -24,7 +24,7 @@ public abstract class DescriptionEvaluatorChain {
     }
 
     public int evaluate(Ad ad){
-        return getNext().isPresent() ? next.evaluate(ad) : ad.getScore();
+        return getNext().isPresent() ? (ad.getScore() + next.evaluate(ad)) : ad.getScore();
 
     }
 
