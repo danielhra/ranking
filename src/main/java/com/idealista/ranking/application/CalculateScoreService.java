@@ -1,11 +1,8 @@
 package com.idealista.ranking.application;
 
-import com.idealista.ranking.application.evaluators.CompletionEvaluator;
-import com.idealista.ranking.application.evaluators.DescriptionEvaluator;
-import com.idealista.ranking.application.evaluators.PictureEvaluator;
 import com.idealista.ranking.application.ports.in.CalculateScoreUseCase;
 import com.idealista.ranking.application.ports.out.CalculateScoreRepository;
-import com.idealista.ranking.config.EvaluatorFactory;
+import com.idealista.ranking.application.evaluators.EvaluatorFactory;
 import com.idealista.ranking.domain.Ad;
 import lombok.Value;
 import org.springframework.stereotype.Service;

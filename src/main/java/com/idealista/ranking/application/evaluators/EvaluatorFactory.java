@@ -1,9 +1,6 @@
-package com.idealista.ranking.config;
+package com.idealista.ranking.application.evaluators;
 
 import com.idealista.ranking.application.Evaluator;
-import com.idealista.ranking.application.evaluators.CompletionEvaluator;
-import com.idealista.ranking.application.evaluators.DescriptionEvaluator;
-import com.idealista.ranking.application.evaluators.PictureEvaluator;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;

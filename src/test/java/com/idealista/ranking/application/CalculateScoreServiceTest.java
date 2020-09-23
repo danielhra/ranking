@@ -5,7 +5,7 @@ import com.idealista.ranking.application.evaluators.CompletionEvaluator;
 import com.idealista.ranking.application.evaluators.DescriptionEvaluator;
 import com.idealista.ranking.application.evaluators.PictureEvaluator;
 import com.idealista.ranking.application.ports.out.CalculateScoreRepository;
-import com.idealista.ranking.config.EvaluatorFactory;
+import com.idealista.ranking.application.evaluators.EvaluatorFactory;
 import com.idealista.ranking.domain.Ad;
 import com.idealista.ranking.motherobjects.AdMother;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,8 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Flux;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
-import static org.assertj.core.api.InstanceOfAssertFactories.list;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
