@@ -26,7 +26,8 @@ public class AdPersistenceAdapter implements CalculateScoreRepository {
     }
 
     @Override
-    public Ad save(Ad capture) {
+    public Ad save(Ad ad) {
+        System.out.println("ad = " + ad);
         return null;
     }
 

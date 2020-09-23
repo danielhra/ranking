@@ -1,14 +1,20 @@
 package com.idealista.ranking.application.evaluators;
 
 import com.idealista.ranking.application.Evaluator;
+import com.idealista.ranking.application.evaluators.strategy.CompletionStrategyFactory;
 import com.idealista.ranking.domain.Ad;
-import org.springframework.context.annotation.Bean;
+import lombok.Value;
 import org.springframework.stereotype.Component;
 
 @Component
+@Value
 public class CompletionEvaluator implements Evaluator {
+    CompletionStrategyFactory strategyFactory;
+
     @Override
     public int evaluate(Ad ad) {
-        return 0;
+        return strategyFactory.chooseStrategyBy(ad.getTypology()).execute(ad);
     }
+
+
 }
