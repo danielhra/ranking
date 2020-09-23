@@ -1,9 +1,9 @@
 package com.idealista.ranking.application.evaluators;
 
 import com.idealista.ranking.application.Evaluator;
-import com.idealista.ranking.application.evaluators.descriptionChain.ChaletDescriptionEvaluatorChain;
-import com.idealista.ranking.application.evaluators.descriptionChain.FlatDescriptionEvaluatorChain;
-import com.idealista.ranking.application.evaluators.descriptionChain.ScoringWordsDescriptionEvaluatorChain;
+import com.idealista.ranking.application.evaluators.chain.ChaletDescriptionEvaluatorChain;
+import com.idealista.ranking.application.evaluators.chain.FlatDescriptionEvaluatorChain;
+import com.idealista.ranking.application.evaluators.chain.ScoringWordsDescriptionEvaluatorChain;
 import com.idealista.ranking.domain.Ad;
 import org.springframework.stereotype.Component;
 
@@ -14,13 +14,6 @@ import java.util.regex.Pattern;
 public class DescriptionEvaluator implements Evaluator {
 
     public static final int SCORE_FOR_HAVING_A_DESCRIPTION = 5;
-
-    private final List<Pattern> scoringWords = List.of(
-            Pattern.compile("Luminoso"),
-            Pattern.compile("Nuevo"),
-            Pattern.compile("Céntrico"),
-            Pattern.compile("Reformado"),
-            Pattern.compile("Ático"));
 
     @Override
     public int evaluate(Ad ad) {

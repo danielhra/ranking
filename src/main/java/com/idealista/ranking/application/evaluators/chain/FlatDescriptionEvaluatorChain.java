@@ -1,6 +1,5 @@
-package com.idealista.ranking.application.evaluators.descriptionChain;
+package com.idealista.ranking.application.evaluators.chain;
 
-import com.idealista.ranking.application.evaluators.descriptionChain.DescriptionEvaluatorChain;
 import com.idealista.ranking.domain.Ad;
 
 import static com.idealista.ranking.domain.Ad.Typology.FLAT;

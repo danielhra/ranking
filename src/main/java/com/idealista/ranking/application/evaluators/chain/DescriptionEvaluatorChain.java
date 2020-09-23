@@ -1,10 +1,10 @@
-package com.idealista.ranking.application.evaluators.descriptionChain;
+package com.idealista.ranking.application.evaluators.chain;
 
 import com.idealista.ranking.domain.Ad;
 
 import java.util.Optional;
 
-public abstract class DescriptionEvaluatorChain {
+public class DescriptionEvaluatorChain {
 
     private DescriptionEvaluatorChain next;
 

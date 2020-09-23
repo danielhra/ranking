@@ -1,4 +1,4 @@
-package com.idealista.ranking.application.evaluators.descriptionChain;
+package com.idealista.ranking.application.evaluators.chain;
 
 import com.idealista.ranking.domain.Ad;
 

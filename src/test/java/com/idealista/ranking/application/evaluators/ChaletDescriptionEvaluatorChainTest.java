@@ -1,7 +1,7 @@
 package com.idealista.ranking.application.evaluators;
 
-import com.idealista.ranking.application.evaluators.descriptionChain.ChaletDescriptionEvaluatorChain;
-import com.idealista.ranking.application.evaluators.descriptionChain.DescriptionEvaluatorChain;
+import com.idealista.ranking.application.evaluators.chain.ChaletDescriptionEvaluatorChain;
+import com.idealista.ranking.application.evaluators.chain.DescriptionEvaluatorChain;
 import com.idealista.ranking.domain.Ad;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
