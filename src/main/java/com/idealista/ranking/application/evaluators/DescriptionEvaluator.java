@@ -2,6 +2,7 @@ package com.idealista.ranking.application.evaluators;
 
 import com.idealista.ranking.application.Evaluator;
 import com.idealista.ranking.domain.Ad;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.function.ToIntFunction;
@@ -10,6 +11,7 @@ import java.util.regex.Pattern;
 import static com.idealista.ranking.domain.Ad.Typology.CHALET;
 import static com.idealista.ranking.domain.Ad.Typology.FLAT;
 
+@Component
 public class DescriptionEvaluator implements Evaluator {
 
     public static final int SCORE_FOR_HAVING_A_DESCRIPTION = 5;
@@ -24,9 +26,6 @@ public class DescriptionEvaluator implements Evaluator {
             Pattern.compile("Céntrico"),
             Pattern.compile("Reformado"),
             Pattern.compile("Ático"));
-
-    public DescriptionEvaluator() {
-    }
 
     @Override
     public int evaluate(Ad ad) {

@@ -5,6 +5,7 @@ import com.idealista.ranking.application.evaluators.CompletionEvaluator;
 import com.idealista.ranking.application.evaluators.DescriptionEvaluator;
 import com.idealista.ranking.application.evaluators.PictureEvaluator;
 import com.idealista.ranking.application.ports.out.CalculateScoreRepository;
+import com.idealista.ranking.config.EvaluatorFactory;
 import com.idealista.ranking.domain.Ad;
 import com.idealista.ranking.motherobjects.AdMother;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +17,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Flux;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
+import static org.assertj.core.api.InstanceOfAssertFactories.list;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,7 +41,8 @@ class CalculateScoreServiceTest {
         repository = mock(AdPersistenceAdapter.class);
         descriptionEvaluator = mock(DescriptionEvaluator.class);
         completionEvaluator = mock(CompletionEvaluator.class);
-        sut = new CalculateScoreService(repository, pictureEvaluator,descriptionEvaluator,completionEvaluator);
+        final var evaluatorFactory = new EvaluatorFactory(pictureEvaluator, descriptionEvaluator, completionEvaluator);
+        sut = new CalculateScoreService(repository, evaluatorFactory);
     }
 
     @Test
@@ -52,9 +56,6 @@ class CalculateScoreServiceTest {
 
         assertThat(adArgumentCaptor.getValue()).hasFieldOrPropertyWithValue("score",100);
     }
-
-
-
 
     @Test
     void shouldCallPictureEvaluator() {
@@ -97,6 +98,22 @@ class CalculateScoreServiceTest {
         sut.calculateScore();
 
         verify(completionEvaluator).evaluate(ad);
+
+    }
+
+    @Test
+    void shouldSumAllEvaluators() {
+
+        final Ad ad = AdMother.getPrebuiltAd().build();
+
+        when(repository.getAdsWithoutScore()).thenReturn(Flux.just(ad));
+        when(pictureEvaluator.evaluate(ad)).thenReturn(5);
+        when(descriptionEvaluator.evaluate(ad)).thenReturn(5);
+        when(completionEvaluator.evaluate(ad)).thenReturn(5);
+        sut.calculateScore();
+        verify(repository).save(adArgumentCaptor.capture());
+
+        assertThat(adArgumentCaptor.getValue()).hasFieldOrPropertyWithValue("score",15);
 
     }
 }

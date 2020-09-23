@@ -2,9 +2,11 @@ package com.idealista.ranking.application.evaluators;
 
 import com.idealista.ranking.application.Evaluator;
 import com.idealista.ranking.domain.Ad;
+import org.springframework.stereotype.Component;
 
 import static com.idealista.ranking.domain.Picture.Quality.SD;
 
+@Component
 public class PictureEvaluator implements Evaluator {
 
     public static final int LACK_OF_PICTURE_SCORE = -10;

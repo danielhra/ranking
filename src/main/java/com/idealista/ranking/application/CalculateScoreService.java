@@ -5,6 +5,7 @@ import com.idealista.ranking.application.evaluators.DescriptionEvaluator;
 import com.idealista.ranking.application.evaluators.PictureEvaluator;
 import com.idealista.ranking.application.ports.in.CalculateScoreUseCase;
 import com.idealista.ranking.application.ports.out.CalculateScoreRepository;
+import com.idealista.ranking.config.EvaluatorFactory;
 import com.idealista.ranking.domain.Ad;
 import lombok.Value;
 import org.springframework.stereotype.Service;
@@ -19,9 +20,10 @@ public class CalculateScoreService implements CalculateScoreUseCase {
     public static final int MIN_THRESHOLD = 0;
     public static final int MAX_THRESHOLD = 100;
     CalculateScoreRepository repository;
-    PictureEvaluator pictureEvaluator;
-    DescriptionEvaluator descriptionEvaluator;
-    CompletionEvaluator completionEvaluator;
+
+    EvaluatorFactory evaluatorFactory;
+
+
 
     @Override
     public void calculateScore() {
@@ -38,9 +40,10 @@ public class CalculateScoreService implements CalculateScoreUseCase {
     }
 
     private Ad handleScore(Ad ad) {
-        int score = pictureEvaluator.evaluate(ad)
-                + descriptionEvaluator.evaluate(ad)
-                + completionEvaluator.evaluate(ad);
+        int score = evaluatorFactory.getEvaluators()
+                .stream()
+                .mapToInt(evaluator -> evaluator.evaluate(ad))
+                .sum();
 
         return ad.withScore(checkLimits(score));
 
