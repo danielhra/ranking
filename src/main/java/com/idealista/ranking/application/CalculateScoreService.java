@@ -24,16 +24,7 @@ public class CalculateScoreService implements CalculateScoreUseCase {
 
     @Override
     public void calculateScore() {
-
-        repository.getAdsWithoutScore()
-                .flatMap(this::handleScore)
-                .doOnNext(repository::save)
-                .subscribe();
-    }
-
-    private int checkLimits(int score) {
-        return min(MAX_THRESHOLD,
-                max(MIN_THRESHOLD, score));
+        repository.saveAll(repository.getAdsWithoutScore().flatMap(this::handleScore));
     }
 
     private Mono<Ad> handleScore(Ad ad) {
@@ -42,5 +33,10 @@ public class CalculateScoreService implements CalculateScoreUseCase {
                 .flatMap(evaluator -> evaluator.evaluate(ad))
                 .reduce(Integer::sum)
                 .map(score -> ad.withScore(checkLimits(score)));
+    }
+
+    private int checkLimits(int score) {
+        return min(MAX_THRESHOLD,
+                max(MIN_THRESHOLD, score));
     }
 }

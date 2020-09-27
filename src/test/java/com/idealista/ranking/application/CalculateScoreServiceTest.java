@@ -17,15 +17,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.blockhound.BlockHound;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CalculateScoreServiceTest {
 
     @Captor
-    ArgumentCaptor<Ad> adArgumentCaptor;
+    ArgumentCaptor<Flux<Ad>> capturedAds;
     @Mock
     private CalculateScoreService sut;
     @Mock
@@ -54,9 +55,12 @@ class CalculateScoreServiceTest {
         when(descriptionScoreEvaluator.evaluate(ad)).thenReturn(Mono.just(0));
         when(completionScoreEvaluator.evaluate(ad)).thenReturn(Mono.just(0));
         sut.calculateScore();
-        verify(repository).save(adArgumentCaptor.capture());
+        verify(repository).saveAll(capturedAds.capture());
 
-        assertThat(adArgumentCaptor.getValue()).hasFieldOrPropertyWithValue("score", 100);
+        StepVerifier.create(capturedAds.getValue())
+                .expectNextMatches(a -> a.getScore().equals(100))
+                .verifyComplete();
+
     }
 
     @Test
@@ -69,9 +73,11 @@ class CalculateScoreServiceTest {
         when(completionScoreEvaluator.evaluate(ad)).thenReturn(Mono.just(0));
 
         sut.calculateScore();
-        verify(repository).save(adArgumentCaptor.capture());
+        verify(repository).saveAll(capturedAds.capture());
 
-        assertThat(adArgumentCaptor.getValue()).hasFieldOrPropertyWithValue("score", 0);
+        StepVerifier.create(capturedAds.getValue())
+                .expectNextMatches(a -> a.getScore().equals(0))
+                .verifyComplete();
     }
 
     @Test
@@ -84,9 +90,11 @@ class CalculateScoreServiceTest {
         when(descriptionScoreEvaluator.evaluate(ad)).thenReturn(Mono.just(5));
         when(completionScoreEvaluator.evaluate(ad)).thenReturn(Mono.just(5));
         sut.calculateScore();
-        verify(repository).save(adArgumentCaptor.capture());
+        verify(repository).saveAll(capturedAds.capture());
 
-        assertThat(adArgumentCaptor.getValue()).hasFieldOrPropertyWithValue("score", 15);
-
+        StepVerifier.create(capturedAds.getValue())
+                .expectNextMatches(a -> a.getScore().equals(15))
+                .verifyComplete();
     }
+
 }

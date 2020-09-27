@@ -11,7 +11,7 @@ import static com.idealista.ranking.domain.Picture.Quality.HD;
 
 public class PictureMother {
     public static Flux<Picture> createPictures() {
-        return Flux.range(0, 5)
+        return Flux.range(1, 5)
                 .map(integer -> new Picture(integer, "mockUrl", HD));
     }
 }

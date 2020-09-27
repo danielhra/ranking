@@ -1,5 +1,6 @@
 package com.idealista.ranking.adapters.out.vo;
 
+import lombok.Builder;
 import lombok.Value;
 import reactor.core.publisher.Flux;
 

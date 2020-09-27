@@ -7,7 +7,7 @@ import com.idealista.ranking.domain.Picture;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 
-import static com.idealista.ranking.domain.Ad.Typology.*;
+import static com.idealista.ranking.domain.Ad.Typology.of;
 
 @Repository
 public class AdPersistenceAdapter implements CalculateScoreRepository {
@@ -27,10 +27,26 @@ public class AdPersistenceAdapter implements CalculateScoreRepository {
     }
 
     @Override
-    public Ad save(Ad ad) {
-        System.out.println("ad = " + ad);
-        return null;
+    public void saveAll(Flux<Ad> ads) {
+        inMemoryPersistence.saveAds(ads.map(this::toEntity));
     }
+
+    private AdEntity toEntity(Ad ad) {
+        return new AdEntity(
+                ad.getId(),
+                ad.getTypology().getCode(),
+                ad.getDescription(),
+                toEntity(ad.getPictures()),
+                ad.getHouseSize(),
+                ad.getGardenSize(),
+                ad.getScore(),
+                ad.getIrrelevantSince());
+    }
+
+    private Flux<Integer> toEntity(Flux<Picture> pictures) {
+        return pictures.map(Picture::getId);
+    }
+
 
     private Ad toDomain(AdEntity adEntity) {
 
@@ -59,7 +75,6 @@ public class AdPersistenceAdapter implements CalculateScoreRepository {
 
     private Boolean hasScore(AdEntity ad) {
         return ad.getScore() == null;
-
     }
 }
 
