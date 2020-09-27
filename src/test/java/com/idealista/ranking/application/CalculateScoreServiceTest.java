@@ -1,11 +1,10 @@
 package com.idealista.ranking.application;
 
-import com.idealista.ranking.adapters.out.AdPersistenceAdapter;
-import com.idealista.ranking.application.evaluators.CompletionEvaluator;
-import com.idealista.ranking.application.evaluators.DescriptionEvaluator;
-import com.idealista.ranking.application.evaluators.PictureEvaluator;
+import com.idealista.ranking.application.evaluators.CompletionScoreEvaluator;
+import com.idealista.ranking.application.evaluators.DescriptionScoreEvaluator;
+import com.idealista.ranking.application.evaluators.EvaluatorFactory;
+import com.idealista.ranking.application.evaluators.PictureScoreEvaluator;
 import com.idealista.ranking.application.ports.out.CalculateScoreRepository;
-import com.idealista.ranking.config.EvaluatorFactory;
 import com.idealista.ranking.domain.Ad;
 import com.idealista.ranking.motherobjects.AdMother;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,35 +12,36 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import reactor.blockhound.BlockHound;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
-import static org.assertj.core.api.InstanceOfAssertFactories.list;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CalculateScoreServiceTest {
 
-    private CalculateScoreService sut;
-    private CalculateScoreRepository repository;
-    private PictureEvaluator pictureEvaluator;
-
-    private DescriptionEvaluator descriptionEvaluator;
-
     @Captor
     ArgumentCaptor<Ad> adArgumentCaptor;
-    private CompletionEvaluator completionEvaluator;
+    @Mock
+    private CalculateScoreService sut;
+    @Mock
+    private CalculateScoreRepository repository;
+
+    @Mock
+    private PictureScoreEvaluator pictureScoreEvaluator;
+    @Mock
+    private DescriptionScoreEvaluator descriptionScoreEvaluator;
+    @Mock
+    private CompletionScoreEvaluator completionScoreEvaluator;
 
     @BeforeEach
     void setUp() {
-
-        pictureEvaluator = mock(PictureEvaluator.class);
-        repository = mock(AdPersistenceAdapter.class);
-        descriptionEvaluator = mock(DescriptionEvaluator.class);
-        completionEvaluator = mock(CompletionEvaluator.class);
-        final var evaluatorFactory = new EvaluatorFactory(pictureEvaluator, descriptionEvaluator, completionEvaluator);
+        BlockHound.install();
+        final var evaluatorFactory = new EvaluatorFactory(pictureScoreEvaluator, descriptionScoreEvaluator, completionScoreEvaluator);
         sut = new CalculateScoreService(repository, evaluatorFactory);
     }
 
@@ -50,22 +50,13 @@ class CalculateScoreServiceTest {
         final Ad ad = AdMother.getPrebuiltAd().build();
 
         when(repository.getAdsWithoutScore()).thenReturn(Flux.just(ad));
-        when(pictureEvaluator.evaluate(ad)).thenReturn(200);
+        when(pictureScoreEvaluator.evaluate(ad)).thenReturn(Mono.just(200));
+        when(descriptionScoreEvaluator.evaluate(ad)).thenReturn(Mono.just(0));
+        when(completionScoreEvaluator.evaluate(ad)).thenReturn(Mono.just(0));
         sut.calculateScore();
         verify(repository).save(adArgumentCaptor.capture());
 
-        assertThat(adArgumentCaptor.getValue()).hasFieldOrPropertyWithValue("score",100);
-    }
-
-    @Test
-    void shouldCallPictureEvaluator() {
-        final Ad ad = AdMother.getPrebuiltAd().build();
-
-        when(repository.getAdsWithoutScore()).thenReturn(Flux.just(ad));
-        sut.calculateScore();
-
-        verify(pictureEvaluator).evaluate(ad);
-
+        assertThat(adArgumentCaptor.getValue()).hasFieldOrPropertyWithValue("score", 100);
     }
 
     @Test
@@ -73,32 +64,14 @@ class CalculateScoreServiceTest {
         final Ad ad = AdMother.getPrebuiltAd().build();
 
         when(repository.getAdsWithoutScore()).thenReturn(Flux.just(ad));
-        when(pictureEvaluator.evaluate(ad)).thenReturn(-10);
+        when(pictureScoreEvaluator.evaluate(ad)).thenReturn(Mono.just(-10));
+        when(descriptionScoreEvaluator.evaluate(ad)).thenReturn(Mono.just(0));
+        when(completionScoreEvaluator.evaluate(ad)).thenReturn(Mono.just(0));
+
         sut.calculateScore();
         verify(repository).save(adArgumentCaptor.capture());
 
-        assertThat(adArgumentCaptor.getValue()).hasFieldOrPropertyWithValue("score",0);
-    }
-
-    @Test
-    void shouldCallDescriptionEvaluator() {
-        final Ad ad = AdMother.getPrebuiltAd().build();
-
-        when(repository.getAdsWithoutScore()).thenReturn(Flux.just(ad));
-        sut.calculateScore();
-
-        verify(descriptionEvaluator).evaluate(ad);
-
-    }
-    @Test
-    void shouldCallCompletionEvaluator() {
-        final Ad ad = AdMother.getPrebuiltAd().build();
-
-        when(repository.getAdsWithoutScore()).thenReturn(Flux.just(ad));
-        sut.calculateScore();
-
-        verify(completionEvaluator).evaluate(ad);
-
+        assertThat(adArgumentCaptor.getValue()).hasFieldOrPropertyWithValue("score", 0);
     }
 
     @Test
@@ -107,13 +80,13 @@ class CalculateScoreServiceTest {
         final Ad ad = AdMother.getPrebuiltAd().build();
 
         when(repository.getAdsWithoutScore()).thenReturn(Flux.just(ad));
-        when(pictureEvaluator.evaluate(ad)).thenReturn(5);
-        when(descriptionEvaluator.evaluate(ad)).thenReturn(5);
-        when(completionEvaluator.evaluate(ad)).thenReturn(5);
+        when(pictureScoreEvaluator.evaluate(ad)).thenReturn(Mono.just(5));
+        when(descriptionScoreEvaluator.evaluate(ad)).thenReturn(Mono.just(5));
+        when(completionScoreEvaluator.evaluate(ad)).thenReturn(Mono.just(5));
         sut.calculateScore();
         verify(repository).save(adArgumentCaptor.capture());
 
-        assertThat(adArgumentCaptor.getValue()).hasFieldOrPropertyWithValue("score",15);
+        assertThat(adArgumentCaptor.getValue()).hasFieldOrPropertyWithValue("score", 15);
 
     }
 }

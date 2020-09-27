@@ -4,11 +4,12 @@ import com.idealista.ranking.adapters.out.vo.AdEntity;
 import com.idealista.ranking.application.ports.out.CalculateScoreRepository;
 import com.idealista.ranking.domain.Ad;
 import com.idealista.ranking.domain.Picture;
+import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import static com.idealista.ranking.domain.Ad.Typology.*;
 
+@Repository
 public class AdPersistenceAdapter implements CalculateScoreRepository {
 
     private final InMemoryPersistence inMemoryPersistence;
@@ -26,7 +27,8 @@ public class AdPersistenceAdapter implements CalculateScoreRepository {
     }
 
     @Override
-    public Ad save(Ad capture) {
+    public Ad save(Ad ad) {
+        System.out.println("ad = " + ad);
         return null;
     }
 
@@ -38,18 +40,20 @@ public class AdPersistenceAdapter implements CalculateScoreRepository {
                 .houseSize(adEntity.getHouseSize())
                 .id(adEntity.getId())
                 .pictures(toDomain(adEntity.getPictures()))
+                .typology(of(adEntity.getTypology()))
                 .build();
 
 
     }
 
-    private List<Picture> toDomain(List<Integer> pictures) {
-        return inMemoryPersistence
-                .getPictures()
-                .filter(pictureEntity -> pictures.contains(pictureEntity.getId()))
-                .map(pictureEntity -> new Picture(pictureEntity.getId(), pictureEntity.getUrl(), Picture.Quality.valueOf(pictureEntity.getQuality())))
-                .toStream()
-                .collect(Collectors.toList());
+    private Flux<Picture> toDomain(Flux<Integer> pictureIds) {
+
+        return pictureIds
+                .flatMap(pictureId -> inMemoryPersistence
+                        .getPictures()
+                        .filter(pictureEntity -> pictureEntity.getId().equals(pictureId)))
+                .map(pictureEntity -> new Picture(pictureEntity.getId(), pictureEntity.getUrl(), Picture.Quality.valueOf(pictureEntity.getQuality())));
+
     }
 
 

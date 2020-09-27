@@ -1,6 +1,7 @@
 package com.idealista.ranking.motherobjects;
 
 import com.idealista.ranking.domain.Ad;
+import reactor.core.publisher.Flux;
 
 public class AdMother {
 
@@ -13,7 +14,7 @@ public class AdMother {
                 .irrelevantSince(null)
                 .typology(null)
                 .score(null)
-                .pictures(PictureMother.createPictures().subList(2, 3));
+                .pictures(PictureMother.createPictures().take(2));
 
     }
 }

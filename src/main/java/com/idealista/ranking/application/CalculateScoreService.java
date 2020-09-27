@@ -1,20 +1,18 @@
 package com.idealista.ranking.application;
 
-import com.idealista.ranking.application.evaluators.CompletionEvaluator;
-import com.idealista.ranking.application.evaluators.DescriptionEvaluator;
-import com.idealista.ranking.application.evaluators.PictureEvaluator;
+import com.idealista.ranking.application.evaluators.EvaluatorFactory;
 import com.idealista.ranking.application.ports.in.CalculateScoreUseCase;
 import com.idealista.ranking.application.ports.out.CalculateScoreRepository;
-import com.idealista.ranking.config.EvaluatorFactory;
 import com.idealista.ranking.domain.Ad;
-import lombok.Value;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 @Service
-@Value
+@AllArgsConstructor
 public class CalculateScoreService implements CalculateScoreUseCase {
 
     public static final int MIN_THRESHOLD = 0;
@@ -24,12 +22,11 @@ public class CalculateScoreService implements CalculateScoreUseCase {
     EvaluatorFactory evaluatorFactory;
 
 
-
     @Override
     public void calculateScore() {
 
         repository.getAdsWithoutScore()
-                .map(this::handleScore)
+                .flatMap(this::handleScore)
                 .doOnNext(repository::save)
                 .subscribe();
     }
@@ -39,13 +36,11 @@ public class CalculateScoreService implements CalculateScoreUseCase {
                 max(MIN_THRESHOLD, score));
     }
 
-    private Ad handleScore(Ad ad) {
-        int score = evaluatorFactory.getEvaluators()
-                .stream()
-                .mapToInt(evaluator -> evaluator.evaluate(ad))
-                .sum();
+    private Mono<Ad> handleScore(Ad ad) {
 
-        return ad.withScore(checkLimits(score));
-
+        return evaluatorFactory.getEvaluators()
+                .flatMap(evaluator -> evaluator.evaluate(ad))
+                .reduce(Integer::sum)
+                .map(score -> ad.withScore(checkLimits(score)));
     }
 }
