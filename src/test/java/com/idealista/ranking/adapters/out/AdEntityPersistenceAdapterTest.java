@@ -50,9 +50,6 @@ class AdEntityPersistenceAdapterTest {
                 AdEntityMother.createAdWithScore()
         ));
 
-        when(inMemoryPersistence.getPictures()).thenReturn(pictures);
-
-
         StepVerifier
                 .create(sut.getAdsWithoutScore())
                 .expectNextMatches(ad -> ad.getScore() == null)
@@ -111,6 +108,20 @@ class AdEntityPersistenceAdapterTest {
                 ad.getHouseSize().equals(adDomain.getHouseSize()) &&
                 ad.getIrrelevantSince() == null &&
                 ad.getTypology().equals(adDomain.getTypology().getCode());
+    }
+
+    @Test
+    void shouldGetAdsWithAScoreGreaterThan40() {
+        when(inMemoryPersistence.getAds()).thenReturn(Flux.just(
+                adWithoutScore,
+                AdEntityMother.createAdWithScore()
+        ));
+
+        StepVerifier
+                .create(sut.getAdsWithScoreGreaterOrEqualThan(40))
+                .expectNextMatches(ad -> ad.getScore() >= 40)
+                .verifyComplete();
+
     }
 }
 

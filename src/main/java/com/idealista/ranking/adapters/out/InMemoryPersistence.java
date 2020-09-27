@@ -2,7 +2,8 @@ package com.idealista.ranking.adapters.out;
 
 import com.idealista.ranking.adapters.out.vo.AdEntity;
 import com.idealista.ranking.adapters.out.vo.PictureEntity;
-import com.idealista.ranking.domain.Ad;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 
@@ -15,7 +16,7 @@ public class InMemoryPersistence {
     public static final String SD = "SD";
     public static final String HD = "HD";
     private Flux<AdEntity> ads;
-    private Flux<PictureEntity> pictures;
+    private final Flux<PictureEntity> pictures;
 
     public InMemoryPersistence() {
 

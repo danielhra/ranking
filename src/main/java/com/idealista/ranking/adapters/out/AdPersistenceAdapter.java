@@ -2,6 +2,7 @@ package com.idealista.ranking.adapters.out;
 
 import com.idealista.ranking.adapters.out.vo.AdEntity;
 import com.idealista.ranking.application.ports.out.CalculateScoreRepository;
+import com.idealista.ranking.application.ports.out.GetAdsRepository;
 import com.idealista.ranking.domain.Ad;
 import com.idealista.ranking.domain.Picture;
 import org.springframework.stereotype.Repository;
@@ -10,7 +11,7 @@ import reactor.core.publisher.Flux;
 import static com.idealista.ranking.domain.Ad.Typology.of;
 
 @Repository
-public class AdPersistenceAdapter implements CalculateScoreRepository {
+public class AdPersistenceAdapter implements CalculateScoreRepository, GetAdsRepository {
 
     private final InMemoryPersistence inMemoryPersistence;
 
@@ -50,14 +51,16 @@ public class AdPersistenceAdapter implements CalculateScoreRepository {
 
     private Ad toDomain(AdEntity adEntity) {
 
-        return Ad.builder()
-                .description(adEntity.getDescription())
-                .gardenSize(adEntity.getGardenSize())
-                .houseSize(adEntity.getHouseSize())
+        final Ad.AdBuilder adBuilder = Ad.builder()
                 .id(adEntity.getId())
-                .pictures(toDomain(adEntity.getPictures()))
                 .typology(of(adEntity.getTypology()))
-                .build();
+                .description(adEntity.getDescription())
+                .score(adEntity.getScore())
+                .pictures(toDomain(adEntity.getPictures()))
+                .gardenSize(adEntity.getGardenSize())
+                .houseSize(adEntity.getHouseSize());
+
+        return adBuilder.build();
 
 
     }
@@ -67,6 +70,7 @@ public class AdPersistenceAdapter implements CalculateScoreRepository {
         return pictureIds
                 .flatMap(pictureId -> inMemoryPersistence
                         .getPictures()
+                        .log()
                         .filter(pictureEntity -> pictureEntity.getId().equals(pictureId)))
                 .map(pictureEntity -> new Picture(pictureEntity.getId(), pictureEntity.getUrl(), Picture.Quality.valueOf(pictureEntity.getQuality())));
 
@@ -75,6 +79,16 @@ public class AdPersistenceAdapter implements CalculateScoreRepository {
 
     private Boolean hasScore(AdEntity ad) {
         return ad.getScore() == null;
+    }
+
+    @Override
+    public Flux<Ad> getAdsWithScoreGreaterOrEqualThan(int score) {
+        return inMemoryPersistence
+                .getAds()
+                .filter(adEntity -> adEntity.getScore() != null)
+                .filter(adEntity ->  adEntity.getScore() >= score)
+                .log()
+                .map(this::toDomain);
     }
 }
 
