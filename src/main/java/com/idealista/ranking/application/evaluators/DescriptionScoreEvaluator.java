@@ -1,7 +1,7 @@
 package com.idealista.ranking.application.evaluators;
 
 import com.idealista.ranking.application.Evaluator;
-import com.idealista.ranking.application.evaluators.chain.DescriptionEvaluatorFactory;
+import com.idealista.ranking.application.evaluators.descriptionEvaluators.DescriptionEvaluatorFactory;
 import com.idealista.ranking.domain.Ad;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;

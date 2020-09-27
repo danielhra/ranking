@@ -1,4 +1,4 @@
-package com.idealista.ranking.application.evaluators.chain;
+package com.idealista.ranking.application.evaluators.descriptionEvaluators;
 
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;

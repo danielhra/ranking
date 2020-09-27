@@ -5,10 +5,6 @@ import com.idealista.ranking.adapters.out.vo.PictureEntity;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 @Repository
 public class InMemoryPersistence {
 
@@ -17,8 +13,8 @@ public class InMemoryPersistence {
     public static final String GARAGE = "GARAGE";
     public static final String SD = "SD";
     public static final String HD = "HD";
-    private Flux<AdEntity> ads;
-    private Flux<PictureEntity> pictures;
+    private final Flux<AdEntity> ads;
+    private final Flux<PictureEntity> pictures;
 
     public InMemoryPersistence() {
 

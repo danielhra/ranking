@@ -1,7 +1,7 @@
 package com.idealista.ranking.application.evaluators;
 
-import com.idealista.ranking.application.evaluators.chain.DescriptionEvaluator;
-import com.idealista.ranking.application.evaluators.chain.MatchingWordsScoreEvaluator;
+import com.idealista.ranking.application.evaluators.descriptionEvaluators.DescriptionEvaluator;
+import com.idealista.ranking.application.evaluators.descriptionEvaluators.MatchingWordsScoreEvaluator;
 import com.idealista.ranking.domain.Ad;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

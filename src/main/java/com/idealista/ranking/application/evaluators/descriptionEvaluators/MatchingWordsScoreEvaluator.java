@@ -1,4 +1,4 @@
-package com.idealista.ranking.application.evaluators.chain;
+package com.idealista.ranking.application.evaluators.descriptionEvaluators;
 
 import com.idealista.ranking.domain.Ad;
 import reactor.core.publisher.Flux;
