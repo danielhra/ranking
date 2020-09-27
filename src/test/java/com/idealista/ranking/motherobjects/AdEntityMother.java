@@ -3,7 +3,7 @@ package com.idealista.ranking.motherobjects;
 import com.idealista.ranking.adapters.out.vo.AdEntity;
 import reactor.core.publisher.Flux;
 
-import java.util.List;
+import java.time.LocalDate;
 
 public class AdEntityMother {
 
@@ -11,21 +11,20 @@ public class AdEntityMother {
         return new AdEntity(1,
                 "CHALET",
                 "Este piso es una ganga, compra, compra, COMPRA!!!!!",
-                List.of(1,3),
+                Flux.just(1, 3),
                 300,
                 null,
                 80,
-                null);
+                LocalDate.now());
     }
 
-public static AdEntity  createAdWithoutScore() {
+    public static AdEntity createAdWithoutScore() {
         return new AdEntity(1,
                 "CHALET",
                 "Este piso es una ganga, compra, compra, COMPRA!!!!!",
-                List.of(1,3),
+                Flux.just(1, 3),
                 300,
-                null,
-                null,
-                null);
+                150,
+                null,null);
     }
 }

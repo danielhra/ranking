@@ -1,18 +1,19 @@
 package com.idealista.ranking.application.evaluators.chain;
 
 import com.idealista.ranking.domain.Ad;
+import reactor.core.publisher.Mono;
 
 import static com.idealista.ranking.domain.Ad.Typology.CHALET;
 
-public class ChaletDescriptionEvaluatorChain extends DescriptionEvaluatorChain {
+
+public class ChaletDescriptionScoreEvaluator implements DescriptionEvaluator {
     public static final int SCORE_FOR_CHALET_DESCRIPTION_WITH_MORE_THAN_50_WORDS = 20;
 
     @Override
-    public int evaluate(Ad ad) {
-        return CHALET == ad.getTypology()
-                ? super.evaluate(ad.withScore(calculateChaletScoreByNumberOfWords(ad.getDescription())))
-                : super.evaluate(ad);
-
+    public Mono<Integer> evaluate(Mono<Ad> ad) {
+        return ad
+                .filter(a -> CHALET == a.getTypology())
+                .map(a -> calculateChaletScoreByNumberOfWords(a.getDescription()));
     }
 
     private int calculateChaletScoreByNumberOfWords(String description) {

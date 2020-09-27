@@ -3,9 +3,10 @@ package com.idealista.ranking.domain;
 import lombok.Builder;
 import lombok.Value;
 import lombok.With;
+import reactor.core.publisher.Flux;
 
+import java.time.LocalDate;
 import java.util.Date;
-import java.util.List;
 import java.util.stream.Stream;
 
 @Value
@@ -15,13 +16,13 @@ public class Ad {
     Integer id;
     Typology typology;
     String description;
-    List<Picture> pictures;
+    Flux<Picture> pictures;
     Integer houseSize;
     Integer gardenSize;
 
     @With
     Integer score;
-    Date irrelevantSince;
+    LocalDate irrelevantSince;
 
     public enum Typology {
         FLAT("PISO"),

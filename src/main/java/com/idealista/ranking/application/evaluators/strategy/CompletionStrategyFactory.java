@@ -2,6 +2,7 @@ package com.idealista.ranking.application.evaluators.strategy;
 
 import com.idealista.ranking.domain.Ad;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
@@ -21,7 +22,7 @@ public class CompletionStrategyFactory {
     }
 
     public CompletionStrategy chooseStrategyBy(Ad.Typology typology){
-        return typology != null ? strategies.getOrDefault(typology, ad -> 0) : (ad -> 0);
+        return typology != null ? strategies.getOrDefault(typology, ad -> Mono.just(0)) : (ad -> Mono.just(0));
     }
 
 

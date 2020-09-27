@@ -2,21 +2,19 @@ package com.idealista.ranking.application.evaluators;
 
 import com.idealista.ranking.application.Evaluator;
 import org.springframework.stereotype.Component;
-
-import java.util.Collections;
-import java.util.List;
+import reactor.core.publisher.Flux;
 
 @Component
 public class EvaluatorFactory {
-    private final List<Evaluator> evaluators;
+    private final Flux<Evaluator> evaluators;
 
-    public EvaluatorFactory(PictureEvaluator pictureEvaluator,
-                            DescriptionEvaluator descriptionEvaluator,
-                            CompletionEvaluator completionEvaluator) {
-        this.evaluators = List.of(pictureEvaluator, descriptionEvaluator, completionEvaluator);
+    public EvaluatorFactory(PictureScoreEvaluator pictureScoreEvaluator,
+                            DescriptionScoreEvaluator descriptionScoreEvaluator,
+                            CompletionScoreEvaluator completionScoreEvaluator) {
+        this.evaluators = Flux.just(pictureScoreEvaluator, descriptionScoreEvaluator, completionScoreEvaluator);
     }
 
-    public List<Evaluator> getEvaluators() {
-        return Collections.unmodifiableList(evaluators);
+    public Flux<Evaluator> getEvaluators() {
+        return evaluators;
     }
 }

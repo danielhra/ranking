@@ -1,21 +1,22 @@
 package com.idealista.ranking.application.evaluators;
 
-import com.idealista.ranking.application.evaluators.chain.DescriptionEvaluatorChain;
-import com.idealista.ranking.application.evaluators.chain.FlatDescriptionEvaluatorChain;
+import com.idealista.ranking.application.evaluators.chain.DescriptionEvaluator;
+import com.idealista.ranking.application.evaluators.chain.FlatDescriptionScoreEvaluator;
 import com.idealista.ranking.domain.Ad;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
-class FlatDescriptionEvaluatorChainTest {
+class FlatDescriptionScoreEvaluatorChainTest {
 
-    DescriptionEvaluatorChain handler;
+    DescriptionEvaluator handler;
 
     @BeforeEach
     void setUp() {
-        handler = new FlatDescriptionEvaluatorChain();
+        handler = new FlatDescriptionScoreEvaluator();
     }
 
     @ParameterizedTest
@@ -26,36 +27,36 @@ class FlatDescriptionEvaluatorChainTest {
 
     })
     void shouldAdd10PointsIfItsAFlatAndItHasBetween29And49WordsInclusive(String description) {
-        final int actual = handler.evaluate(
-                Ad.builder()
+        StepVerifier.create(
+         handler.evaluate(
+                 Mono.just(Ad.builder()
                         .typology(Ad.Typology.FLAT)
                         .description(description)
                         .build()
-        );
-        Assertions.assertThat(actual).isEqualTo(10);
+        ))).expectNext(10).verifyComplete();
     }
 
     @Test
     void shouldAdd30PointsIfItsAFlatAndContainsMoreThanOrEqual50Words() {
 
-        final int actual = handler.evaluate(
-                Ad.builder()
+        StepVerifier.create(
+         handler.evaluate(
+                Mono.just(Ad.builder()
                         .typology(Ad.Typology.FLAT)
                         .description("this is a very long description that provides no information")
                         .build()
-        );
-        Assertions.assertThat(actual).isEqualTo(30);
+        ))).expectNext(30).verifyComplete();
     }
 
     @Test
     void shouldNotAddMorePointsIfItsNotAFlat() {
 
-        final int actual = handler.evaluate(
-                Ad.builder()
+        StepVerifier.create(
+         handler.evaluate(
+                Mono.just(Ad.builder()
                         .typology(Ad.Typology.GARAGE)
                         .description("this is a very long description that provides no information")
                         .build()
-        );
-        Assertions.assertThat(actual).isZero();
+        ))).verifyComplete();
     }
 }
