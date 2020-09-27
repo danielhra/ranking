@@ -11,7 +11,9 @@ import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
 import java.util.List;
+import java.util.Objects;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -39,13 +41,15 @@ class GetPublicAdsControllerTest {
 
     private boolean mapsCorrectlyToDto(PublicAd publicAd) {
         final List<Picture> pictures = domainAd.getPictures().collectList().block();
-        assert pictures != null;
-        StepVerifier.create(publicAd.getPictureUrls())
-                .expectNext(pictures.get(0).getUrl())
-                .expectNext(pictures.get(1).getUrl())
-                .verifyComplete();
+        Objects.requireNonNull(pictures);
+        assertThat(publicAd.getPictureUrls()).contains(pictures.get(0).getUrl(),pictures.get(0).getUrl());
+
 
         return publicAd.getDescription()
-                .equals(domainAd.getDescription());
+                .equals(domainAd.getDescription())
+                && publicAd.getGardenSize().equals(domainAd.getGardenSize())
+                && publicAd.getHouseSize().equals(domainAd.getHouseSize())
+                && publicAd.getTypology().equals(domainAd.getTypology().getCode())
+                && publicAd.getId().equals(domainAd.getId());
     }
 }

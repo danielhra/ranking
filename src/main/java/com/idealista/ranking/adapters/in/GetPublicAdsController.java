@@ -8,6 +8,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -17,21 +20,25 @@ public class GetPublicAdsController {
 
     @GetMapping("/v1/ads/public")
     public Flux<PublicAd> getPublicAds() {
-        return getPublicAdsUseCase.getPublicAds().map(this::toDto);
+        return getPublicAdsUseCase.getPublicAds().flatMap(this::toDto);
     }
 
-    private PublicAd toDto(Ad ad) {
+    private Mono<PublicAd> toDto(Ad ad) {
 
-        return new PublicAd(ad.getId(),
-                ad.getTypology().getCode(),
-                ad.getDescription(),
-                mapToDto(ad.getPictures()),
-                ad.getHouseSize(),
-                ad.getGardenSize());
+        return mapToDto(ad.getPictures()).map(pictureUrls ->
+                new PublicAd(
+                        ad.getId(),
+                        ad.getTypology().getCode(),
+                        ad.getDescription(),
+                        pictureUrls,
+                        ad.getHouseSize(),
+                        ad.getGardenSize())
+
+        );
 
     }
 
-    private Flux<String> mapToDto(Flux<Picture> pictures) {
-        return pictures.map(Picture::getUrl);
+    private Mono<List<String>> mapToDto(Flux<Picture> pictures) {
+        return pictures.map(Picture::getUrl).collectSortedList();
     }
 }
